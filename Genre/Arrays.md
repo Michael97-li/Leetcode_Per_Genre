@@ -188,11 +188,11 @@ class Solution {
     public void merge(int[] nums1, int m, int[] nums2, int n) {
         // total length
         int len = m + n;
-    
+  
         // two index
         int index1 = m-1;
         int index2 = n-1;
-    
+  
         // compare from back
         while(index1>=0 && index2>=0){
             if (nums2[index2]>=nums1[index1]){
@@ -206,12 +206,56 @@ class Solution {
                 len--;
             }
         }
-    
+  
         if (index2 < 0) return;
         for (int i = index2;i>=0;i--){
             nums1[i]=nums2[index2];
             index2--;
         } 
     }
+}
+```
+
+### 27. Remove Element
+
+Given an integer array `nums` and an integer `val`, remove all occurrences of `val` in `nums` [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm). The relative order of the elements may be changed.
+
+Since it is impossible to change the length of the array in some languages, you must instead have the result be placed in the **first part** of the array `nums`. More formally, if there are `k` elements after removing the duplicates, then the first `k` elements of `nums` should hold the final result. It does not matter what you leave beyond the first `k` elements.
+
+Return `k`* after placing the final result in the first *`k`* slots of *`nums`.
+
+Do **not** allocate extra space for another array. You must do this by **modifying the input array [in-place](https://en.wikipedia.org/wiki/In-place_algorithm)** with O(1) extra memory.
+
+**Example 1:**
+
+<pre><strong>Input:</strong> nums = [3,2,2,3], val = 3
+<strong>Output:</strong> 2, nums = [2,2,_,_]
+<strong>Explanation:</strong> Your function should return k = 2, with the first two elements of nums being 2.
+It does not matter what you leave beyond the returned k (hence they are underscores).</pre>
+
+#### 分析
+
+Since this question is asking us to remove all elements of the given value in-place, we have to handle it with O(1)**O**(**1**) extra space. How to solve it? We can keep two pointers i**i** and j**j**, where i**i** is the slow-runner while j**j** is the fast-runner.
+
+#### 基本思路
+
+When **n**u**m**s[**j**] *equals to the given value, skip this element by incrementing **j**. As long as nums[j] \neq **n**u**m**s*[**j**], we copy **n**u**m**s[**j**]**to **n**u**m**s**[**i**] and increment both indexes at the same time. Repeat the process until **j** reaches the end of the array and the new length is **i**.
+
+Time complexity : **O**(**n**). Assume the array has a total of **n** elements, both **i** and **j** traverse at most **2**n steps.
+
+Space complexity : **O**(**1**).
+
+#### JAVA
+
+```java
+public int removeElement(int[] nums, int val) {
+    int i = 0;
+    for (int j = 0; j < nums.length; j++) {
+        if (nums[j] != val) {
+            nums[i] = nums[j];
+            i++;
+        }
+    }
+    return i;
 }
 ```
