@@ -259,3 +259,70 @@ public int removeElement(int[] nums, int val) {
     return i;
 }
 ```
+
+### 941. Valid Mountain Array
+
+Given an array of integers `arr`, return  *`true` if and only if it is a valid mountain array* .
+
+Recall that arr is a mountain array if and only if:
+
+* `arr.length >= 3`
+* There exists some `i` with `0 < i < arr.length - 1` such that:
+  * `arr[0] < arr[1] < ... < arr[i - 1] < arr[i]`
+  * `arr[i] > arr[i + 1] > ... > arr[arr.length - 1]`
+
+![](https://assets.leetcode.com/uploads/2019/10/20/hint_valid_mountain_array.png)
+
+**Example 1:**
+
+<pre><strong>Input:</strong> arr = [2,1]
+<strong>Output:</strong> false
+</pre>
+
+**Example 2:**
+
+<pre><strong>Input:</strong> arr = [3,5,5]
+<strong>Output:</strong> false
+</pre>
+
+**Example 3:**
+
+<pre><strong>Input:</strong> arr = [0,3,2,1]
+<strong>Output:</strong> true</pre>
+
+#### 分析
+
+If we walk along the mountain from left to right, we have to move strictly up, then strictly down.
+
+#### 基本思路
+
+Let's walk up from left to right until we can't: that has to be the peak. We should ensure the peak is not the first or last element. Then, we walk down. If we reach the end, the array is valid, otherwise its not.
+
+Time Complexity: **O**(**N**), where **N** is the length of `A`.
+
+Space Complexity: **O**(**1**).
+
+#### JAVA
+
+```java
+class Solution {
+    public boolean validMountainArray(int[] A) {
+        int N = A.length;
+        int i = 0;
+
+        // walk up
+        while (i+1 < N && A[i] < A[i+1])
+            i++;
+
+        // peak can't be first or last
+        if (i == 0 || i == N-1)
+            return false;
+
+        // walk down
+        while (i+1 < N && A[i] > A[i+1])
+            i++;
+
+        return i == N-1;
+    }
+}
+```
