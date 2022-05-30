@@ -20,3 +20,19 @@ There are many types of “graphs”. In this Explore Card, we will introduce th
 * Degree of a Vertex: the term “degree” applies to unweighted graphs. The degree of a vertex is the number of edges connecting the vertex. In Figure 1, the degree of vertex A is 3 because three edges are connecting it.
 * In-Degree: “in-degree” is a concept in directed graphs. If the in-degree of a vertex is d, there are d directional edges incident to the vertex. In Figure 2, A’s indegree is 1, i.e., the edge from F to A.
 * Out-Degree: “out-degree” is a concept in directed graphs. If the out-degree of a vertex is d, there are d edges incident from the vertex. In Figure 2, A’s outdegree is 3, i,e, the edges A to B, A to C, and A to G.
+
+### The two important functions of a “disjoint set.”
+
+---
+
+In the introduction videos above, we discussed the two important functions in a “disjoint set”.
+
+* **The `find` function** finds the root node of a given vertex. For example, in Figure 5, the output of the find function for vertex 3 is 0.
+* **The `union` function** unions two vertices and makes their root nodes the same. In Figure 5, if we union vertex 4 and vertex 5, their root node will become the same, which means the union function will modify the root node of vertex 4 or vertex 5 to the same root node.
+
+### There are two ways to implement a “disjoint set”.
+
+---
+
+* Implementation with Quick Find: in this case, the time complexity of the `find` function will be **O**(**1**). However, the `union` function will take more time with the time complexity of **O**(**N**).
+* Implementation with Quick Union: compared with the Quick Find implementation, the time complexity of the `union` function is better. Meanwhile, the `find` function will take more time in this case.
