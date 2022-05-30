@@ -21,6 +21,8 @@ There are many types of “graphs”. In this Explore Card, we will introduce th
 * In-Degree: “in-degree” is a concept in directed graphs. If the in-degree of a vertex is d, there are d directional edges incident to the vertex. In Figure 2, A’s indegree is 1, i.e., the edge from F to A.
 * Out-Degree: “out-degree” is a concept in directed graphs. If the out-degree of a vertex is d, there are d edges incident from the vertex. In Figure 2, A’s outdegree is 3, i,e, the edges A to B, A to C, and A to G.
 
+## Disjoint Set
+
 ### The two important functions of a “disjoint set.”
 
 ---
@@ -36,3 +38,81 @@ In the introduction videos above, we discussed the two important functions in a 
 
 * Implementation with Quick Find: in this case, the time complexity of the `find` function will be **O**(**1**). However, the `union` function will take more time with the time complexity of **O**(**N**).
 * Implementation with Quick Union: compared with the Quick Find implementation, the time complexity of the `union` function is better. Meanwhile, the `find` function will take more time in this case.
+
+## Code Example
+
+### 547. Number of Province | Medium
+
+There are `n` cities. Some of them are connected, while some are not. If city `a` is connected directly with city `b`, and city `b` is connected directly with city `c`, then city `a` is connected indirectly with city `c`.
+
+A **province** is a group of directly or indirectly connected cities and no other cities outside of the group.
+
+You are given an `n x n` matrix `isConnected` where `isConnected[i][j] = 1` if the `i<sup>th</sup>` city and the `j<sup>th</sup>` city are directly connected, and `isConnected[i][j] = 0` otherwise.
+
+Return  *the total number of **provinces*** .
+
+**Example 1:**
+
+![](https://assets.leetcode.com/uploads/2020/12/24/graph1.jpg)
+
+<pre><strong>Input:</strong> isConnected = [[1,1,0],[1,1,0],[0,0,1]]
+<strong>Output:</strong> 2
+</pre>
+
+**Example 2:**
+
+![](https://assets.leetcode.com/uploads/2020/12/24/graph2.jpg)
+
+<pre><strong>Input:</strong> isConnected = [[1,0,0],[0,1,0],[0,0,1]]
+<strong>Output:</strong> 3</pre>
+
+#### 分析
+
+Using Union-Find Method
+
+#### 基本思路
+
+Another method that can be used to determine the number of connected components in a graph is the union find method. The method is simple.
+
+We make use of a parent array of size **N**. We traverse over all the nodes of the graph. For every node traversed, we traverse over all the nodes directly connected to it and assign them to a single group which is represented by their **p**a**r**e**n**t node. This process is called forming a **u**n**i**o**n**. Every group has a single **p**a**r**e**n**t node, whose own parent is given by \text{-1}**-1**.
+
+For every new pair of nodes found, we look for the parents of both the nodes. If the parents nodes are the same, it indicates that they have already been united into the same group. If the parent nodes differ, it means they are yet to be united. Thus, for the pair of nodes **(**x**,**y**)**, while forming the union, we assign parent\big[parent[x]\big]=parent[y]**p**a**r**e**n**t**[**p**a**r**e**n**t**[**x**]**]**=**p**a**r**e**n**t**[**y**]**, which ultimately combines them into the same group.
+
+* Time complexity : O(n^3). We traverse over the complete matrix once. Union and find operations take O(n)**O**(**n**) time in the worst case.
+* Space complexity : O(n). **p**a**r**e**n**t array of size n**n** is used
+
+#### JAVA
+
+```java
+public class Solution {
+    int find(int parent[], int i) {
+        if (parent[i] == -1)
+            return i;
+        return find(parent, parent[i]);
+    }
+
+    void union(int parent[], int x, int y) {
+        int xset = find(parent, x);
+        int yset = find(parent, y);
+        if (xset != yset)
+            parent[xset] = yset;
+    }
+    public int findCircleNum(int[][] M) {
+        int[] parent = new int[M.length];
+        Arrays.fill(parent, -1);
+        for (int i = 0; i < M.length; i++) {
+            for (int j = 0; j < M.length; j++) {
+                if (M[i][j] == 1 && i != j) {
+                    union(parent, i, j);
+                }
+            }
+        }
+        int count = 0;
+        for (int i = 0; i < parent.length; i++) {
+            if (parent[i] == -1)
+                count++;
+        }
+        return count;
+    }
+}
+```
