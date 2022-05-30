@@ -84,35 +84,67 @@ For every new pair of nodes found, we look for the parents of both the nodes. If
 #### JAVA
 
 ```java
-public class Solution {
-    int find(int parent[], int i) {
-        if (parent[i] == -1)
-            return i;
-        return find(parent, parent[i]);
-    }
+class Solution {
+    // Union Find
+    public int findCircleNum(int[][] isConnected) {
+        if (isConnected == null || isConnected.length == 0) {
+            return 0;
+        }
 
-    void union(int parent[], int x, int y) {
-        int xset = find(parent, x);
-        int yset = find(parent, y);
-        if (xset != yset)
-            parent[xset] = yset;
-    }
-    public int findCircleNum(int[][] M) {
-        int[] parent = new int[M.length];
-        Arrays.fill(parent, -1);
-        for (int i = 0; i < M.length; i++) {
-            for (int j = 0; j < M.length; j++) {
-                if (M[i][j] == 1 && i != j) {
-                    union(parent, i, j);
+        int n = isConnected.length;
+        UnionFind uf = new UnionFind(n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (isConnected[i][j] == 1) {
+                    uf.union(i, j);
                 }
             }
         }
-        int count = 0;
-        for (int i = 0; i < parent.length; i++) {
-            if (parent[i] == -1)
-                count++;
+
+        return uf.getCount();
+    }
+
+    class UnionFind {
+        private int[] root;
+        private int[] rank;
+        private int count;
+
+        UnionFind(int size) {
+            root = new int[size];
+            rank = new int[size];
+            count = size;
+            for (int i = 0; i < size; i++) {
+                root[i] = i;
+                rank[i] = 1;
+            }
         }
-        return count;
+
+        int find(int x) {
+            if (x == root[x]) {
+                return x;
+            }
+            return root[x] = find(root[x]);
+        }
+
+        void union(int x, int y) {
+            int rootX = find(x);
+            int rootY = find(y);
+            if (rootX != rootY) {
+                if (rank[rootX] > rank[rootY]) {
+                    root[rootY] = rootX;
+                } else if (rank[rootX] < rank[rootY]) {
+                    root[rootX] = rootY;
+                } else {
+                    root[rootY] = rootX;
+                    rank[rootX] += 1;
+                }
+                count--;
+            }
+        }
+
+        int getCount() {
+            return count;
+        }
     }
 }
 ```
