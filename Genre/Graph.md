@@ -179,3 +179,86 @@ Return `true` *if the edges of the given graph make up a valid tree, and* `false
 * `0 <= a<sub>i</sub>, b<sub>i</sub><span> </span>< n`
 * `a<sub>i</sub><span> </span>!= b<sub>i</sub>`
 * There are no self-loops or repeated edges
+
+### 分析
+
+Using Union-Find Method
+
+#### 基本思路
+
+For the graph to be a valid tree, it must have *exactly* `n - 1` edges. Any less, and it can't possibly be fully connected. Any more, and it *has* to contain cycles. Additionally, if the graph is fully connected *and* contains exactly `n - 1` edges, it can't *possibly* contain a cycle, and therefore must be a tree!
+
+This definition simplified the problem down to checking whether or not the graph is fully connected. If it is, and if it contains `n - 1` edges, then we know it's a tree. In the previous approaches, we used graph search algorithms to check whether or not all nodes were reachable, starting from a single source node.
+
+Each time there was no merge, it was because we were adding an edge between two nodes that were already connected via a path. This means there is now an additional path between them—which is the definition of a cycle. Therefore,  *as soon as this happens* , we can terminate the algorithm and return `false`.
+
+* Time complexity : O(N⋅α(N))
+* Space complexity : O(n)
+
+#### JAVA
+
+```java
+class Solution {
+    // Union Find
+    public int findCircleNum(int[][] isConnected) {
+        if (isConnected == null || isConnected.length == 0) {
+            return 0;
+        }
+
+        int n = isConnected.length;
+        UnionFind uf = new UnionFind(n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (isConnected[i][j] == 1) {
+                    uf.union(i, j);
+                }
+            }
+        }
+
+        return uf.getCount();
+    }
+
+    class UnionFind {
+        private int[] root;
+        private int[] rank;
+        private int count;
+
+        UnionFind(int size) {
+            root = new int[size];
+            rank = new int[size];
+            count = size;
+            for (int i = 0; i < size; i++) {
+                root[i] = i;
+                rank[i] = 1;
+            }
+        }
+
+        int find(int x) {
+            if (x == root[x]) {
+                return x;
+            }
+            return root[x] = find(root[x]);
+        }
+
+        void union(int x, int y) {
+            int rootX = find(x);
+            int rootY = find(y);
+            if (rootX != rootY) {
+                if (rank[rootX] > rank[rootY]) {
+                    root[rootY] = rootX;
+                } else if (rank[rootX] < rank[rootY]) {
+                    root[rootX] = rootY;
+                } else {
+                    root[rootY] = rootX;
+                    rank[rootX] += 1;
+                }
+                count--;
+            }
+        }
+
+        int getCount() {
+            return count;
+        }
+    }
+}
+```
