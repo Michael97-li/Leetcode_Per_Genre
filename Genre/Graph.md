@@ -262,3 +262,122 @@ class Solution {
     }
 }
 ```
+
+### 323. Number of Connected Components in an Undirected Grap | Medium
+
+You have a graph of `n` nodes. You are given an integer `n` and an array `edges` where `edges[i] = [a<sub>i</sub>, b<sub>i</sub>]` indicates that there is an edge between `a<sub>i</sub>` and `b<sub>i</sub>` in the graph.
+
+Return  *the number of connected components in the graph* .
+
+**Example 1:**
+
+![](https://assets.leetcode.com/uploads/2021/03/14/conn1-graph.jpg)
+
+<pre><strong>Input:</strong> n = 5, edges = [[0,1],[1,2],[3,4]]
+<strong>Output:</strong> 2
+</pre>
+
+**Example 2:**
+
+![](https://assets.leetcode.com/uploads/2021/03/14/conn2-graph.jpg)
+
+<pre><strong>Input:</strong> n = 5, edges = [[0,1],[1,2],[2,3],[3,4]]
+<strong>Output:</strong> 1
+</pre>
+
+**Constraints:**
+
+* `1 <= n <= 2000`
+* `1 <= edges.length <= 5000`
+* `edges[i].length == 2`
+* `0 <= a<sub>i</sub><span> </span><= b<sub>i</sub><span> </span>< n`
+* `a<sub>i</sub><span> </span>!= b<sub>i</sub>`
+* There are no repeated edges.
+
+### 分析
+
+Using Union-Find Method
+
+#### 基本思路
+
+Imagine we have a graph with `N` vertices and `0` edges. The number of connected components will be `N` in that graph.
+
+![fig](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/Figures/323/DSU-1.png)
+
+Let's now add the edge from vertex 1 to vertex 2. This will decrease the number of components by 1. This is because vertices 1 and 2 are now in the same component.
+
+![fig](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/Figures/323/DSU-2.png)
+
+When we then add the edge from vertex 2 to vertex 3, the number of components will decrease by 1 again.
+
+![fig](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/Figures/323/DSU-3.png)
+
+However, this pattern will not continue when we add the edge from vertex 1 to vertex 3. The number of components will not change because vertices 1, 2, and 3 are already in the same component.
+
+![fig](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/Figures/323/DSU-4.png)
+
+The above observation is the main intuition behind the DSU approach.
+
+**Algorithm**
+
+1. Initialize a variable `count` with the number of vertices in the input.
+2. Traverse all of the edges one by one, performing the union-find method `combine` on each edge. If the endpoints are already in the same set, then keep traversing. If they are not, then decrement `count` by 1.
+3. After traversing all of the `edges`, the variable `count` will contain the number of components in the graph.
+
+
+Here E**E** = Number of edges, V**V** = Number of vertices.
+
+* Time complexity: O(E\cdotα(n))**O**(**E**⋅**α**(**n**)**)**.
+  Iterating over every edge requires O(E)**O**(**E**) operations, and for every operation, we are performing the `combine` method which is O(α(n))**O**(**α**(**n**)**)**, where α(n) is the inverse Ackermann function.
+* Space complexity: O(V)**O**(**V**).
+  Storing the representative/immediate-parent of each vertex takes O(V)**O**(**V**) space. Furthermore, storing the size of components also takes O(V)**O**(**V**) space.
+
+#### JAVA
+
+```java
+public class Solution {
+
+    private int find(int[] representative, int vertex) {
+        if (vertex == representative[vertex]) {
+            return vertex;
+        }
+    
+        return representative[vertex] = find(representative, representative[vertex]);
+    }
+  
+    private int combine(int[] representative, int[] size, int vertex1, int vertex2) {
+        vertex1 = find(representative, vertex1);
+        vertex2 = find(representative, vertex2);
+    
+        if (vertex1 == vertex2) {
+            return 0;
+        } else {
+            if (size[vertex1] > size[vertex2]) {
+                size[vertex1] += size[vertex2];
+                representative[vertex2] = vertex1;
+            } else {
+                size[vertex2] += size[vertex1];
+                representative[vertex1] = vertex2;
+            }
+            return 1;
+        }
+    }
+
+    public int countComponents(int n, int[][] edges) {
+        int[] representative = new int[n];
+        int[] size = new int[n];
+    
+        for (int i = 0; i < n; i++) {
+            representative[i] = i;
+            size[i] = 1;
+        }
+    
+        int components = n;
+        for (int i = 0; i < edges.length; i++) { 
+            components -= combine(representative, size, edges[i][0], edges[i][1]);
+        }
+
+        return components;
+    }
+}
+```
